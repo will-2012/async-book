@@ -51,5 +51,3 @@ async fn dance() { ... }
 那么当`learn_song`在执行时线程将无法做别的事，这也使得无法同时跳舞。但是通过`.await`
 执行`learn_song`的future，我们就可以在`learn_song`阻塞时让其他任务来掌控当前线程。
 这样就可以做到在单线程并发执行多个future到完成状态。
-
-现在，你已经学会了`async`/`await`基础，现在我们来试着写一个例子吧。
