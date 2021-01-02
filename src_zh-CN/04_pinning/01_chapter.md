@@ -1,6 +1,6 @@
 # 固定（Pinning）
 
-为了轮询 future，future 首先要用特殊类型 `Pin<T>` 来固定。如果你读了前面《执行 `Future` 与任务》小节中关于 `Future` 退出的解释，你会从 `Future::poll` 方法的定义中认出 `Pin`。但这意味什么？我们为什么需要它？
+为了轮询 future，future 首先要用特殊类型 `Pin<T>` 来固定。如果你读了前面 [执行 `Future` 与任务] 小节中关于 [`Future` 特质] 的解释，你会从 `Future::poll` 方法的定义中认出 `Pin`。但这意味什么？我们为什么需要它？
 
 ## 为什么需要固定
 
@@ -87,7 +87,7 @@ struct AsyncFuture {
 
 我们来看个例子：
 
-```rust,
+```rust, ignore
 use std::pin::Pin;
 
 #[derive(Debug)]
@@ -167,7 +167,7 @@ fn main() {
 
 我们可以得到预期结果：
 
-```rust,
+```rust, ignore
 a: test1, b: test1
 a: test2, b: test2
 ```
@@ -218,14 +218,14 @@ fn main() {
 
 我们可能以为它只会把 `test1` 打印了两次：
 
-```rust,
+```rust, ignore
 a: test1, b: test1
 a: test1, b: test1
 ```
 
 但实际上我们得到得结果是：
 
-```rust,
+```rust, ignore
 a: test1, b: test1
 a: test1, b: test2
 ```
@@ -297,7 +297,7 @@ fn main() {
 
 回到我们的例子。我们能用 `Pin` 来解决我们的问题。我们来看看，如果我们需要用一个固定的指针，我们的例子会编程什么样：
 
-```rust,
+```rust, ignore
 use std::pin::Pin;
 use std::marker::PhantomPinned;
 
@@ -390,7 +390,7 @@ pub fn main() {
 
 现在，如果我们尝试将我们的数据移走，我们会遇到编译错误：
 
-```rust,
+```rust, compile_fail
 pub fn main() {
     let mut test1 = Test::new("test1");
     let mut test1 = unsafe { Pin::new_unchecked(&mut test1) };
@@ -442,7 +442,9 @@ pub fn main() {
 类型系统会阻止我们移动这些数据。
 
 > 重点记住，固定到栈总是依赖你在写 `unsafe` 代码时提供的保证。例如，我们知道了 `&'a mut T` 的 *被指向对象（pointee）* 在生命周期 `'a` 期间固定，我们不知道被 `&'a mut T` 指向数据是否在 `'a` 结束后仍然不被移动。如果移动了，将会违反固定的协约。
+>
 > 另外一个常见错误是忘记影射（shadow）原本的变量，因为你可以释放 `Pin` 然后移动数据到 `&'a mut T`，像下面这样（这违反了固定的协约）：
+>
 > ```rust
 > fn main() {
 >    let mut test1 = Test::new("test1");
@@ -495,7 +497,7 @@ pub fn main() {
 
 固定 `!Unpin` 类型到堆上，能给我们的数据一个稳定的地址，所以我们知道我们指向的数据不会在被固定之后被移动走。和在栈上固定相反，我们知道整个对象的生命周期期间数据都会被固定在一处。
 
-```rust,
+```rust, edition2018
 use std::pin::Pin;
 use std::marker::PhantomPinned;
 
@@ -580,5 +582,6 @@ execute_unpin_future(fut); // OK
 
 8. 对于 `T: !Unpin` 的被固定数据，你必须维护好数据内存不会无效的约定，或者叫 *固定时起直到释放*。这是 *固定协约* 中的重要部分。
 
-
+[执行 `Future` 与任务]: ../02_execution/01_chapter.md
+[`Future` 特质]: ../02_execution/02_future.md
 [`pin_utils`]: ../02_execution/01_chapter.md
