@@ -14,12 +14,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Install mdbook && mdbook-linkcheck
+    - name: Install mdbook
       uses: actions-rs/install@v0.1
       with:
-        crate:
-          - mdbook
-          - mdbook-linkcheck
+        crate: mdbook
+        version: latest
+        use-tool-cache: true
+    - name: Install mdbook-linkcheck
+      uses: actions-rs/install@v0.1
+      with:
+        crate: mdbook-linkcheck
         version: latest
         use-tool-cache: true
     - name: Replace with zh-CN Translation
