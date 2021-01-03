@@ -11,7 +11,7 @@
   - [执行器与系统I/O](02_execution/05_io.md)
 - [`async`/`await`](03_async_await/01_chapter.md)
 - [固定](04_pinning/01_chapter.md)
-- [Streams](05_streams/01_chapter.md)
+- [流](05_streams/01_chapter.md)
   - [迭代与并发](05_streams/02_iteration_and_concurrency.md)
 - [同时执行多个 Future](06_multiple_futures/01_chapter.md)
   - [`join!`](06_multiple_futures/02_join.md)
