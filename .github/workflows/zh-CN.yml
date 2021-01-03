@@ -50,7 +50,7 @@ jobs:
       with:
         deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
         publish_dir: ./book
-        publish_branch: zh-CN
+        publish_branch: gh-pages
         allow_empty_commit: true
         user_name: "huangjj27"
         user_email: "huangjj.27@qq.com"
