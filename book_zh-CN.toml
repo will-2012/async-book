@@ -1,0 +1,17 @@
+[book]
+title = "Rust 中的异步编程"
+authors = ["Taylor Cramer", "huangjj27（译）", "EthanYuan（译）"]
+language="zh-CN"
+src = "src_zh-CN"
+
+[build]
+create-missing = true
+
+[preprocess.links]
+
+[output.html]
+git-repository-url = "https://github.com/rust-lang/async-book"
+
+[output.linkcheck]
+follow-web-links = true
+traverse-parent-directories = false
