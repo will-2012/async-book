@@ -26,8 +26,8 @@ jobs:
         crate: mdbook-linkcheck
         version: latest
         use-tool-cache: true
-    - name: Replace with zh-CN Translation
-      run: rm -rf src && mv src_zh-CN src
+    - name: Redirect with book_zh-CN.toml
+      run: rm book.toml && mv book_zh-CN.toml book.toml
     - name: Build mdbook
       run: mdbook build && pwd
     - name: Cache artifact
