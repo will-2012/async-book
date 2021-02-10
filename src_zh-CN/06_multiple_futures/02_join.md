@@ -27,7 +27,7 @@
 
 对于那些返回 `Result` 的 future，考虑使用 `try_join!` 而非 `join`。因为 `join` 只会在所有子 future 都完成后才会完成，它甚至会在子 future 返回 `Err` 之后继续处理。
 
-与 `join!` 不同，`try_join!` 会在其中的字 future 返回错误后立即完成。
+与 `join!` 不同，`try_join!` 会在其中的子future返回错误后立即完成。
 
 ```rust,no_run
 {{#include ../../examples/06_02_join/src/lib.rs:try_join}}
