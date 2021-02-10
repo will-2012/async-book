@@ -14,7 +14,7 @@
 
 `select` 也支持 `default` 和 `complete` 分支。
 
-`default` 会在没有被 `select` 的 future 完成时执行，因此，带有 `default` 分支的 `select` 总是马上返回，因为 `default` 会在没有其它future准备好的时候返回。
+`default` 会在被 `select` 的future都没有完成时执行，因此，带有 `default` 分支的 `select` 总是马上返回，因为 `default` 会在没有其它future准备好的时候返回。
 
 `complete` 分支则用来处理所有被 `select` 的 future 都完成并且不需进一步处理的情况。这在循环 `select` 时很好用：
 
@@ -27,7 +27,7 @@
 
 需要 `Unpin` 是因为 `select` 是用可变引用访问 future 的，不获取 future 的所有权。未完成的 future 因此可以在 `select` 调用后继续使用。
 
-类似的，需要 `FusedFuture` 是因为 `select` 一定不能轮询已完成的 future。`FusedFuture` 用来实现追踪（track）future是否已完成。这种使得在循环中使用 `select` 成为客官您，只轮询尚未完成的 future。这可以从上面的例子中看出，`a_fut` 或 `b_fut` 可能会在第二次循环的时候已经完成了。因为 `future::ready` 返回的 future 实现了 `FusedFuture`，所以 `select` 可以知道不必再次轮询它了。
+类似的，需要 `FusedFuture` 是因为 `select` 一定不能轮询已完成的 future。`FusedFuture` 用来追踪（track）future是否已完成。这种使得在循环中使用 `select` 成为可能，只轮询尚未完成的 future。这可以从上面的例子中看出，`a_fut` 或 `b_fut` 可能会在第二次循环的时候已经完成了。因为 `future::ready` 返回的 future 实现了 `FusedFuture`，所以 `select` 可以知道不必再次轮询它了。
 
 注意，stream 也有对应的 `FusedStream` 特质。实现了这个特质或者被 `.fuse()` 包装的 Stream 会从它们的 `.next`/`try_next()` 组合子中返还 `FusedFutre`。
 
@@ -41,7 +41,7 @@
 
 这个在一个任务需要 `select` 循环中运行但是它本身是在 `select` 循环中创建的场景中很好用。
 
-注意 `.select_next_some()` 函数的是使用。这可以用在 `select` 上，并且只运行从 stream 返回的 `Some(_)` 值而忽略 `None`。
+注意下面 `.select_next_some()` 函数的用法。它可以用在 `select` 上，并且只运行从 stream 返回的 `Some(_)` 值而忽略 `None`。
 
 ```rust,no_run
 {{#include ../../examples/06_03_select/src/lib.rs:fuse_terminated}}
