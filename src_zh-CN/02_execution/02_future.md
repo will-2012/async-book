@@ -45,9 +45,9 @@ Futures的这种模型允许组合多个异步操作而无需立刻分配资源�
 {{#include ../../examples/02_02_future_trait/src/lib.rs:real_future}}
 ```
 
-我们首先注意到`self`参数类型不再是`mut self`而是`Pin<&mut Self,`。我们会在后面章节
-更多地讨论固定（pinning）的问题，但先在我们只需要知道它能让我们创建不可移动的future类型。
-不可移动对象（简称不动对象）能够储存指向另一字段（field）和指针，例如：
+我们首先注意到`self`参数类型不再是`mut self`而是`Pin<&mut Self>,`。我们会在后面章节
+更多地讨论固定（pinning）的问题，但现在我们只需要知道它能让我们创建不可移动的future类型。
+不可移动对象能够储存指向另一字段（field）的指针，例如：
 `struct MyFut { a: i32, ptr_to_a: *const i32 }`。固定时于启动async/await是必需的。
 
 然后`wake: fn()`变成了`&mut Context<'_>`。在`SimpleFuture`里，我们调用函数指针（`fn()`）
