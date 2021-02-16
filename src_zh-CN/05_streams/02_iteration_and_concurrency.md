@@ -7,12 +7,12 @@
 `while let` 以及 `next`/`try_next` 函数还可以使用：
 
 ```rust
-{{#include ../../examples/05_02_iteration_and_concurrency/src/lib.rs:nexts}}
+{{#include ../../examples_zh-CN/05_02_iteration_and_concurrency/src/lib.rs:nexts}}
 ```
 
 然而，如果我们每次只处理一个元素，我们就会失去并发的机会，而这又是我们编写异步代码的首要目的。
 为了并发处理一个 `Stream` 的多个值，使用 `for_each_concurrent` 或 `try_for_each_concurrent` 方法：
 
 ```rust,no_run
-{{#include ../../examples/05_02_iteration_and_concurrency/src/lib.rs:try_for_each_concurrent}}
+{{#include ../../examples_zh-CN/05_02_iteration_and_concurrency/src/lib.rs:try_for_each_concurrent}}
 ```

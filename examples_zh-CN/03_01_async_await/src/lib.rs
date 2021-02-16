@@ -38,7 +38,7 @@ async fn borrow_x(x: &u8) -> u8 { *x }
 // ANCHOR: static_future_with_borrow
 fn bad() -> impl Future<Output = u8> {
     let x = 5;
-    borrow_x(&x) // ERROR: `x` does not live long enough
+    borrow_x(&x) // 错误: `x`活得不够久
 }
 
 fn good() -> impl Future<Output = u8> {

@@ -1,16 +1,15 @@
 #![cfg(test)]
-#![feature(async_await)]
 
 // ANCHOR: imports
 use {
     futures::{
-        future::{FutureExt, BoxFuture},
-        task::{ArcWake, waker_ref},
+        future::{BoxFuture, FutureExt},
+        task::{waker_ref, ArcWake},
     },
     std::{
         future::Future,
+        sync::mpsc::{sync_channel, Receiver, SyncSender},
         sync::{Arc, Mutex},
-        sync::mpsc::{sync_channel, SyncSender, Receiver},
         task::{Context, Poll},
         time::Duration,
     },
@@ -50,7 +49,7 @@ fn new_executor_and_spawner() -> (Executor, Spawner) {
     // 这只是为了让 `sync_channel` 满足, 并不会出现在真正的执行器中.
     const MAX_QUEUED_TASKS: usize = 10_000;
     let (task_sender, ready_queue) = sync_channel(MAX_QUEUED_TASKS);
-    (Executor { ready_queue }, Spawner { task_sender})
+    (Executor { ready_queue }, Spawner { task_sender })
 }
 // ANCHOR_END: executor_decl
 
@@ -73,7 +72,10 @@ impl ArcWake for Task {
         // 通过将这个任务发送回任务管道来实现 `wake`，
         // 以便让执行器再次轮询它.
         let cloned = arc_self.clone();
-        arc_self.task_sender.send(cloned).expect("too many tasks queued");
+        arc_self
+            .task_sender
+            .send(cloned)
+            .expect("too many tasks queued");
     }
 }
 // ANCHOR_END: arcwake_for_task
@@ -124,4 +126,6 @@ fn main() {
 // ANCHOR_END: main
 
 #[test]
-fn run_main() { main() }
+fn run_main() {
+    main()
+}

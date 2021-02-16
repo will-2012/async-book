@@ -1,15 +1,11 @@
-#![feature(async_await)]
-
 // ANCHOR: imports
-use {
-    std::{
-        future::Future,
-        pin::Pin,
-        sync::{Arc, Mutex},
-        task::{Context, Poll, Waker},
-        thread,
-        time::Duration,
-    },
+use std::{
+    future::Future,
+    pin::Pin,
+    sync::{Arc, Mutex},
+    task::{Context, Poll, Waker},
+    thread,
+    time::Duration,
 };
 // ANCHOR_END: imports
 

@@ -3,7 +3,7 @@
 `futures::select` 宏同时跑多个 future，允许用户在任意 future 完成时响应：
 
 ```rust,no_run
-{{#include ../../examples/06_03_select/src/lib.rs:example}}
+{{#include ../../examples_zh-CN/06_03_select/src/lib.rs:example}}
 ```
 
 上面的函数会并发跑 `t1` 和 `t2`。当 `t1` 和 `t2` 结束时，对应的句柄（handler）会调用 `println!`，然后函数就会结束而不会完成剩下的任务。
@@ -19,7 +19,7 @@
 `complete` 分支则用来处理所有被 `select` 的 future 都完成并且不需进一步处理的情况。这在循环 `select` 时很好用：
 
 ```rust,no_run
-{{#include ../../examples/06_03_select/src/lib.rs:default_and_complete}}
+{{#include ../../examples_zh-CN/06_03_select/src/lib.rs:default_and_complete}}
 ```
 
 ## 和 `Unpin` 与 `FusedFuture` 交互
@@ -32,7 +32,7 @@
 注意，stream 也有对应的 `FusedStream` 特质。实现了这个特质或者被 `.fuse()` 包装的 Stream 会从它们的 `.next`/`try_next()` 组合子中返还 `FusedFutre`。
 
 ```rust,no_run
-{{#include ../../examples/06_03_select/src/lib.rs:fused_stream}}
+{{#include ../../examples_zh-CN/06_03_select/src/lib.rs:fused_stream}}
 ```
 
 ## 带有 `Fuse` 和 `FuturesUnordered` 的 `select` 循环中的并发任务
@@ -44,11 +44,11 @@
 注意下面 `.select_next_some()` 函数的用法。它可以用在 `select` 上，并且只运行从 stream 返回的 `Some(_)` 值而忽略 `None`。
 
 ```rust,no_run
-{{#include ../../examples/06_03_select/src/lib.rs:fuse_terminated}}
+{{#include ../../examples_zh-CN/06_03_select/src/lib.rs:fuse_terminated}}
 ```
 
 当有很多份相同 future 的拷贝同时执行时，使用 `FutureUnordered` 类型。下面的例子和上面的例子很类似，但会运行 `run_on_new_num_fut` 的所有拷贝都到完成状态，而不是当一个新拷贝创建时就中断他们。它也会打印 `run_on_new_num_fut` 的返回值：
 
 ```rust,no_run
-{{#include ../../examples/06_03_select/src/lib.rs:futures_unordered}}
+{{#include ../../examples_zh-CN/06_03_select/src/lib.rs:futures_unordered}}
 ```
