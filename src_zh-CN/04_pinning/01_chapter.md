@@ -77,7 +77,7 @@ struct AsyncFuture {
 }
 ```
 
-这里，`ReadIhtoBuf` future 持有了一个指向其他字段 `x` 的引用。然而，如果 `AsyncFuture` 被移动了，`x` 的位置（location）也会被移走，使得存储在 `read_into_buf_fut.buf` 的指针失效。
+这里，`ReadIntoBuf` future 持有了一个指向其他字段 `x` 的引用。然而，如果 `AsyncFuture` 被移动了，`x` 的位置（location）也会被移走，使得存储在 `read_into_buf_fut.buf` 的指针失效。
 
 固定 future 到内存特定位置则阻止了这种问题，让创建指向 `async` 块的引用变得安全。
 
@@ -287,7 +287,7 @@ fn main() {
 
 我们来看看固定和 `Pin` 类型如何帮助我们解决这个问题。
 
-`Pin` 类型包装了指针类型，保证了指针指向的值不会被移走。例如，`Pin<&mut T>`，`Pin<&T>` 和 `Pin<Box<T>>` 全都保证了 `T` 不会被移走，如果 `T: !Unpin`。
+`Pin` 类型包装了指针类型，保证了指针指向的值不会被移走。例如，如果`T: !Unpin`, `Pin<&mut T>`, `Pin<&T>` 和 `Pin<Box<T>>` 全都保证了 `T` 不会被移走。
 
 多数类型被移走也不会有问题。这些类型实现了 `Unpin` 特质。指向 `Unpin` 类型的指针能够自由地放进 `Pin`，或取走。例如，`u8` 是 `Unpin` 的，所以 `Pin<&mut T>` 的行为就像普通的 `&mut T`，就像普通的 `&mut u8`。
 
@@ -333,7 +333,7 @@ impl Test {
 }
 ```
 
-如果我们的类型实现了 `!Unpin`，那么固定这个类型的对象到栈上总是 `unsafe` 的行为。你可以用像是 [`pin_utils`] 的库来在将数据固定到栈上的时候避免写 `unsafe`。
+如果我们的类型实现了 `!Unpin`，那么固定这个类型的对象到栈上总是 `unsafe` 的行为。你可以用像是 [`pin_utils`](https://docs.rs/pin-utils/) 的库来在将数据固定到栈上的时候避免写 `unsafe`。
 
 下面，我们将对象 `test1` 和 `test2` 固定到栈上：
 
@@ -578,7 +578,7 @@ execute_unpin_future(fut); // OK
 
 6. 固定 `!Unpin` 对象到栈上需要 `unsafe`
 
-7. 固定 `!Unpin` 对象到堆上需要不需要 `unsafe`。`Box::pin`可以快速完成这种固定。
+7. 固定 `!Unpin` 对象到堆上不需要 `unsafe`。`Box::pin`可以快速完成这种固定。
 
 8. 对于 `T: !Unpin` 的被固定数据，你必须维护好数据内存不会无效的约定，或者叫 *固定时起直到释放*。这是 *固定协约* 中的重要部分。
 

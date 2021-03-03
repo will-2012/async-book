@@ -8,17 +8,17 @@
 
 `src/main.rs`:
 ```rust
-{{#include ../../examples/09_01_sync_tcp_server/src/main.rs}}
+{{#include ../../examples_zh-CN/09_01_sync_tcp_server/src/main.rs}}
 ```
 
 `hello.html`:
 ```html
-{{#include ../../examples/09_01_sync_tcp_server/hello.html}}
+{{#include ../../examples_zh-CN/09_01_sync_tcp_server/hello.html}}
 ```
 
 `404.html`:
 ```html
-{{#include ../../examples/09_01_sync_tcp_server/404.html}}
+{{#include ../../examples_zh-CN/09_01_sync_tcp_server/404.html}}
 ```
 
 如果你使用 `cargo run` 运行这个服务器，然后在浏览器中访问 `127.0.0.1:7878`，你会受到
