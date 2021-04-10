@@ -11,6 +11,7 @@
 在函数声明里加上 `async` 会改变它的返回类型，从单元类型 `()` 变成一个实现了 `Future<Output=()>` 的类型。
 
 如果我们尝试编译这个代码，编译器会警告我们它不会工作：
+
 ```console
 $ cargo check
     Checking async-rust v0.1.0 (file:///projects/async-rust)
@@ -29,6 +30,7 @@ warning: unused implementer of `std::future::Future` that must be used
 我们不能在同步代码中 `await` 或者 `poll` future 类型。我们需要一个异步运行时来处理调度及运行 future 类型至完成状态。请在 [选择一个运行时小节](../08_ecosystem/00_chapter.md) 中获取更多关于异步运行时，执行器和反应器的信息。
 
 ## 增加异步运行时
+
 这里我们会使用 `async-std` 库的执行器。`async-std` 库里的 `#[async_std::main]` 属性允许我们编写异步的 main 函数。为了使用它，得先在 `Cargo.toml` 里启用 `async-std` 的 `attributes` 特性：
 
 ```toml
@@ -38,6 +40,7 @@ features = ["attributes"]
 ```
 
 第一步，我们要切换到异步的 main 函数，并且 `await` 异步版 `handle_connection` 函数返回的 future。然后，我们需要测试服务器是怎样响应的。这里是代码应有的样子：
+
 ```rust
 {{#include ../../examples/09_02_async_tcp_server/src/main.rs:main_func}}
 ```
