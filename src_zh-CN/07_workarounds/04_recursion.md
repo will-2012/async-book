@@ -24,7 +24,7 @@ async fn recursive() {
     recursive().await;
 }
 
-// generates a type like this:
+// 生成一个这样的类型:
 enum Recursive {
     First(Recursive),
     Second(Recursive),
