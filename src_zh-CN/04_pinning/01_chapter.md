@@ -87,7 +87,7 @@ struct AsyncFuture {
 
 我们来看个例子：
 
-```rust, ignore
+```rust,
 use std::pin::Pin;
 
 #[derive(Debug)]
@@ -114,7 +114,8 @@ impl Test {
     }
 
     fn b(&self) -> &String {
-        unsafe {&*(self.b)}
+        assert!(!self.b.is_null(), "Test::b called without Test::init being called first");
+        unsafe { &*(self.b) }
     }
 }
 ```
@@ -167,7 +168,7 @@ fn main() {
 
 我们可以得到预期结果：
 
-```rust, ignore
+```rust,
 a: test1, b: test1
 a: test2, b: test2
 ```
@@ -218,14 +219,14 @@ fn main() {
 
 我们可能以为它只会把 `test1` 打印了两次：
 
-```rust, ignore
+```rust,
 a: test1, b: test1
 a: test1, b: test1
 ```
 
 但实际上我们得到得结果是：
 
-```rust, ignore
+```rust,
 a: test1, b: test1
 a: test1, b: test2
 ```
@@ -297,7 +298,7 @@ fn main() {
 
 回到我们的例子。我们能用 `Pin` 来解决我们的问题。我们来看看，如果我们需要用一个固定的指针，我们的例子会编程什么样：
 
-```rust, ignore
+```rust,
 use std::pin::Pin;
 use std::marker::PhantomPinned;
 
@@ -333,7 +334,7 @@ impl Test {
 }
 ```
 
-如果我们的类型实现了 `!Unpin`，那么固定这个类型的对象到栈上总是 `unsafe` 的行为。你可以用像是 [`pin_utils`](https://docs.rs/pin-utils/) 的库来在将数据固定到栈上的时候避免写 `unsafe`。
+如果我们的类型实现了 `!Unpin`，那么固定这个类型的对象到栈上总是 `unsafe` 的行为。你可以用像是 [`pin_utils`] 的库来在将数据固定到栈上的时候避免写 `unsafe`。
 
 下面，我们将对象 `test1` 和 `test2` 固定到栈上：
 
@@ -390,7 +391,7 @@ pub fn main() {
 
 现在，如果我们尝试将我们的数据移走，我们会遇到编译错误：
 
-```rust, compile_fail
+```rust,
 pub fn main() {
     let mut test1 = Test::new("test1");
     let mut test1 = unsafe { Pin::new_unchecked(&mut test1) };
@@ -497,7 +498,7 @@ pub fn main() {
 
 固定 `!Unpin` 类型到堆上，能给我们的数据一个稳定的地址，所以我们知道我们指向的数据不会在被固定之后被移动走。和在栈上固定相反，我们知道整个对象的生命周期期间数据都会被固定在一处。
 
-```rust, edition2018
+```rust,
 use std::pin::Pin;
 use std::marker::PhantomPinned;
 
@@ -582,6 +583,7 @@ execute_unpin_future(fut); // OK
 
 8. 对于 `T: !Unpin` 的被固定数据，你必须维护好数据内存不会无效的约定，或者叫 *固定时起直到释放*。这是 *固定协约* 中的重要部分。
 
+
 [执行 `Future` 与任务]: ../02_execution/01_chapter.md
 [`Future` 特质]: ../02_execution/02_future.md
-[`pin_utils`]: ../02_execution/01_chapter.md
+[`pin_utils`]: https://docs.rs/pin-utils/
