@@ -18,7 +18,7 @@ enum Foo {
     Second(StepTwo),
 }
 
-// So this function:
+// 所以这个函数:
 async fn recursive() {
     recursive().await;
     recursive().await;
