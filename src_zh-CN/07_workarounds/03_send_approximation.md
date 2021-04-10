@@ -13,7 +13,10 @@ struct NotSend(Rc<()>);
 
 类型 `NotSend` 的变量可能会很简单地作为临时变量出现在 `async fn` 函数中，甚至会出现在 `async fn` 函数返回的 `Future` 类型必须是 `Send` 的时候：
 
-```rust
+```rust,edition2018
+# use std::rc::Rc;
+# #[derive(Default)]
+# struct NotSend(Rc<()>);
 async fn bar() {}
 async fn foo() {
     NotSend::default();
@@ -29,11 +32,19 @@ fn main() {
 
 然而，如果我们改动 `foo` 来存一个 `NotSend` 变量，这个例子就不再编译了：
 
-```rust
+```rust,edition2018
+# use std::rc::Rc;
+# #[derive(Default)]
+# struct NotSend(Rc<()>);
+# async fn bar() {}
 async fn foo() {
     let x = NotSend::default();
     bar().await;
 }
+# fn require_send(_: impl Send) {}
+# fn main() {
+#    require_send(foo());
+# }
 ```
 
 ```
@@ -65,11 +76,19 @@ For more information about this error, try `rustc --explain E0277`.
 
 为了规避这个问题，你可能需要引入一个块作用域来封装任何非 `Send` 变量。这会让编译器更容易发现这些变量不会存活超过 `.await` 点。
 
-```rust
+```rust,edition2018
+# use std::rc::Rc;
+# #[derive(Default)]
+# struct NotSend(Rc<()>);
+# async fn bar() {}
 async fn foo() {
     {
         let x = NotSend::default();
     }
     bar().await;
 }
+# fn require_send(_: impl Send) {}
+# fn main() {
+#    require_send(foo());
+# }
 ```
