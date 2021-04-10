@@ -12,7 +12,7 @@ async fn foo() {
     step_one().await;
     step_two().await;
 }
-// generates a type like this:
+// 生成一个这样的类型:
 enum Foo {
     First(StepOne),
     Second(StepTwo),
