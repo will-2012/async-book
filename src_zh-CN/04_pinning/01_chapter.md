@@ -88,8 +88,6 @@ struct AsyncFuture {
 我们来看个例子：
 
 ```rust,
-use std::pin::Pin;
-
 #[derive(Debug)]
 struct Test {
     a: String,
@@ -135,7 +133,6 @@ fn main() {
     println!("a: {}, b: {}", test2.a(), test2.b());
 
 }
-# use std::pin::Pin;
 # #[derive(Debug)]
 # struct Test {
 #     a: String,
@@ -161,7 +158,8 @@ fn main() {
 #     }
 #
 #     fn b(&self) -> &String {
-#         unsafe {&*(self.b)}
+#         assert!(!self.b.is_null(), "Test::b called without Test::init being called first");
+#         unsafe { &*(self.b) }
 #     }
 # }
 ```
@@ -187,7 +185,6 @@ fn main() {
     println!("a: {}, b: {}", test2.a(), test2.b());
 
 }
-# use std::pin::Pin;
 # #[derive(Debug)]
 # struct Test {
 #     a: String,
@@ -212,7 +209,8 @@ fn main() {
 #     }
 #
 #     fn b(&self) -> &String {
-#         unsafe {&*(self.b)}
+#         assert!(!self.b.is_null(), "Test::b called without Test::init being called first");
+#         unsafe { &*(self.b) }
 #     }
 # }
 ```
@@ -248,7 +246,6 @@ fn main() {
     println!("a: {}, b: {}", test2.a(), test2.b());
 
 }
-# use std::pin::Pin;
 # #[derive(Debug)]
 # struct Test {
 #     a: String,
@@ -273,7 +270,8 @@ fn main() {
 #     }
 #
 #     fn b(&self) -> &String {
-#         unsafe {&*(self.b)}
+#         assert!(!self.b.is_null(), "Test::b called without Test::init being called first");
+#         unsafe { &*(self.b) }
 #     }
 # }
 ```
@@ -288,7 +286,7 @@ fn main() {
 
 我们来看看固定和 `Pin` 类型如何帮助我们解决这个问题。
 
-`Pin` 类型包装了指针类型，保证了指针指向的值不会被移走。例如，如果`T: !Unpin`, `Pin<&mut T>`, `Pin<&T>` 和 `Pin<Box<T>>` 全都保证了 `T` 不会被移走。
+ `Pin` 类型包装了指针类型, 保证指针指向的值不会被移动。例如, `Pin<&mut T>`, `Pin<&T>`, `Pin<Box<T>>` 都保证了 `T` 不会被移动，即使 `T: !Unpin`.
 
 多数类型被移走也不会有问题。这些类型实现了 `Unpin` 特质。指向 `Unpin` 类型的指针能够自由地放进 `Pin`，或取走。例如，`u8` 是 `Unpin` 的，所以 `Pin<&mut T>` 的行为就像普通的 `&mut T`，就像普通的 `&mut u8`。
 
@@ -318,17 +316,19 @@ impl Test {
             _marker: PhantomPinned, // This makes our type `!Unpin`
         }
     }
-    fn init<'a>(self: Pin<&'a mut Self>) {
+
+    fn init(self: Pin<&mut Self>) {
         let self_ptr: *const String = &self.a;
         let this = unsafe { self.get_unchecked_mut() };
         this.b = self_ptr;
     }
 
-    fn a<'a>(self: Pin<&'a Self>) -> &'a str {
+    fn a(self: Pin<&Self>) -> &str {
         &self.get_ref().a
     }
 
-    fn b<'a>(self: Pin<&'a Self>) -> &'a String {
+    fn b(self: Pin<&Self>) -> &String {
+        assert!(!self.b.is_null(), "Test::b called without Test::init being called first");
         unsafe { &*(self.b) }
     }
 }
@@ -373,17 +373,19 @@ pub fn main() {
 #             _marker: PhantomPinned,
 #         }
 #     }
-#     fn init<'a>(self: Pin<&'a mut Self>) {
+#
+#     fn init(self: Pin<&mut Self>) {
 #         let self_ptr: *const String = &self.a;
 #         let this = unsafe { self.get_unchecked_mut() };
 #         this.b = self_ptr;
 #     }
 #
-#     fn a<'a>(self: Pin<&'a Self>) -> &'a str {
+#     fn a(self: Pin<&Self>) -> &str {
 #         &self.get_ref().a
 #     }
 #
-#     fn b<'a>(self: Pin<&'a Self>) -> &'a String {
+#     fn b(self: Pin<&Self>) -> &String {
+#         assert!(!self.b.is_null(), "Test::b called without Test::init being called first");
 #         unsafe { &*(self.b) }
 #     }
 # }
@@ -424,17 +426,19 @@ pub fn main() {
 #             _marker: PhantomPinned, // This makes our type `!Unpin`
 #         }
 #     }
-#     fn init<'a>(self: Pin<&'a mut Self>) {
+#
+#     fn init(self: Pin<&mut Self>) {
 #         let self_ptr: *const String = &self.a;
 #         let this = unsafe { self.get_unchecked_mut() };
 #         this.b = self_ptr;
 #     }
 #
-#     fn a<'a>(self: Pin<&'a Self>) -> &'a str {
+#     fn a(self: Pin<&Self>) -> &str {
 #         &self.get_ref().a
 #     }
 #
-#     fn b<'a>(self: Pin<&'a Self>) -> &'a String {
+#     fn b(self: Pin<&Self>) -> &String {
+#         assert!(!self.b.is_null(), "Test::b called without Test::init being called first");
 #         unsafe { &*(self.b) }
 #     }
 # }
@@ -451,8 +455,10 @@ pub fn main() {
 >    let mut test1 = Test::new("test1");
 >    let mut test1_pin = unsafe { Pin::new_unchecked(&mut test1) };
 >    Test::init(test1_pin.as_mut());
+>
 >    drop(test1_pin);
 >    println!(r#"test1.b points to "test1": {:?}..."#, test1.b);
+>
 >    let mut test2 = Test::new("test2");
 >    mem::swap(&mut test1, &mut test2);
 >    println!("... and now it points nowhere: {:?}", test1.b);
@@ -478,6 +484,7 @@ pub fn main() {
 > #             _marker: PhantomPinned,
 > #         }
 > #     }
+> #
 > #     fn init<'a>(self: Pin<&'a mut Self>) {
 > #         let self_ptr: *const String = &self.a;
 > #         let this = unsafe { self.get_unchecked_mut() };
@@ -489,6 +496,7 @@ pub fn main() {
 > #     }
 > #
 > #     fn b<'a>(self: Pin<&'a Self>) -> &'a String {
+> #         assert!(!self.b.is_null(), "Test::b called without Test::init being called first");
 > #         unsafe { &*(self.b) }
 > #     }
 > # }
@@ -533,8 +541,8 @@ impl Test {
 }
 
 pub fn main() {
-    let mut test1 = Test::new("test1");
-    let mut test2 = Test::new("test2");
+    let test1 = Test::new("test1");
+    let test2 = Test::new("test2");
 
     println!("a: {}, b: {}",test1.as_ref().a(), test1.as_ref().b());
     println!("a: {}, b: {}",test2.as_ref().a(), test2.as_ref().b());
