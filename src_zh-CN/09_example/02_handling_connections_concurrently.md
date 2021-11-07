@@ -31,7 +31,7 @@
 
 # 并行地服务请求
 
-我们的例子现在能够提供极大的并发了（通过使用异步代码），作为并行（使用线程）的替代方案。然而，异步代码和线程不是二者只得其一。在我们 的例子中， `for_each_concurrent` 并发地处理每一个连接，但不是在同一个线程。 `async-std` 库也允许我们生成任务到一个分离开的线程。 因为 `handle_connection` 既是 `Send` 的 也是非阻塞的，所以使用 `async_std::task::spawn` 是安全的。现在代码看起来回事这样子：
+我们的例子现在能够提供极大的并发了（通过使用异步代码），作为并行（使用线程）的替代方案。然而，异步代码和线程不是二者只得其一。在我们 的例子中， `for_each_concurrent` 并发地处理每一个连接，但不是在同一个线程。 `async-std` 库也允许我们生成任务到一个分离开的线程。 因为 `handle_connection` 既是 `Send` 的 也是非阻塞的，所以使用 `async_std::task::spawn` 是安全的。现在代码看起来会像这样子：
 
 ```rust
 {{#include ../../examples/09_05_final_tcp_server/src/main.rs:main_func}}
