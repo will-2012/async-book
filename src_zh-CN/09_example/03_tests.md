@@ -16,6 +16,7 @@ async fn handle_connection(mut stream: impl Read + Write + Unpin) {
 ```
 
 接下来，我们需要将建一个实现了这些特质的 mock `TcpStream`。首先，我们先实现 `Read` 特质，只需要一个方法 `poll_read`。我们的 mock `TcpStream` 会包含一些需要拷贝到读取缓存的数据，然后我们返回 `Poll::Ready` 来表示读取已经完成。
+
 ```rust,ignore
 {{#include ../../examples/09_05_final_tcp_server/src/main.rs:mock_read}}
 ```
@@ -27,11 +28,13 @@ async fn handle_connection(mut stream: impl Read + Write + Unpin) {
 ```
 
 最后，我们的 mock 还需要实现 `Unpin`，标记它所在的内存位置可以安全地转移。关于固定和 `Unpin` 的更多信息，请查看 [关于固定的章节](../04_pinning/01_chapter.md)。
+
 ```rust,ignore
 {{#include ../../examples/09_05_final_tcp_server/src/main.rs:unpin}}
 ```
 
 现在我们准备好测试这个 `handle_connection` 函数了。设置好包含初始数据的 `MockTcpStream` 之后，我们能够通过属性注解 `#[async_std::test]` 执行 `handle_connection`，这很类似我们怎么使用 `#[async_std::main]`。为了保证 `handle_connection` 正常工作，我们要根据 `MockTcpStream` 的初始内容来检查正确的数据已经写入。
+
 ```rust,ignore
 {{#include ../../examples/09_05_final_tcp_server/src/main.rs:test}}
 ```
