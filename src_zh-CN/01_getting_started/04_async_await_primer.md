@@ -17,7 +17,7 @@ async fn do_something() { ... }
 `async fn`函数返回实现了`Future`的类型。为了执行这个`Future`，我们需要执行器（executor）
 
 ```rust,edition2018
-{{#include ../../examples_zh-CN/01_04_async_await_primer/src/lib.rs:hello_world}}
+{{#include ../../examples/01_04_async_await_primer/src/lib.rs:hello_world}}
 ```
 
 在`async fn`函数中， 你可以使用`.await`来等待其他实现了`Future`特质的类型完成，例如 另外一个`async fn`的输出。和`block_on`不同，`.await`不会阻塞当前线程，而是异步地等待 future完成，在当前future无法进行下去时，允许其他任务运行。
