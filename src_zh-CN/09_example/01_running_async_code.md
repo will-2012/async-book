@@ -27,7 +27,7 @@ warning: unused implementer of `std::future::Future` that must be used
 
 因为我们还没有 `await` 或者 `poll` `handle_connection` 返回的结果，它永远不会运行的。如果你这时运行了服务器，并且在浏览器中访问 `127.0.0.1:7878`，你会看到链接被拒绝了；我们的服务器没有在处理请求。
 
-我们不能在同步代码中 `await` 或者 `poll` future 类型。我们需要一个异步运行时来处理调度及运行 future 类型至完成状态。请在 [选择一个运行时小节](../08_ecosystem/00_chapter.md) 中获取更多关于异步运行时，执行器和反应器的信息。
+我们不能在同步代码中  `await` 或者  `poll` future 类型。我们需要一个异步运行时来处理调度及运行 future 类型至完成状态。请在 [选择一个运行时小节](../08_ecosystem/00_chapter.md) 中获取更多关于异步运行时，执行器和反应器的信息。任何列出的运行时都可以在这个项目里工作，但是对于例子，我们选择了使用 `async-std` 库
 
 ## 增加异步运行时
 
