@@ -1,6 +1,6 @@
 # `async`/`.await`初步
 
-`async`/`.await`是Rust内置语法，用于让异步函数编写得像同步代码。`async`将代码块转化成 实现了`Future`特质的状态机。使用同步方法调用阻塞函数会阻塞整个线程，但阻塞`Future`只会 让出（yield）线程控制权，让其他`Future`继续执行。
+`async`/`.await`是Rust内置语法，用于让异步函数编写得像同步代码。`async`将代码块转化成 实现了`Future` trait 的状态机。使用同步方法调用阻塞函数会阻塞整个线程，但阻塞`Future`只会 让出（yield）线程控制权，让其他`Future`继续执行。
 
 我们来加些依赖到 `Cargo.toml` 文件：
 
@@ -20,7 +20,7 @@ async fn do_something() { ... }
 {{#include ../../examples/01_04_async_await_primer/src/lib.rs:hello_world}}
 ```
 
-在`async fn`函数中， 你可以使用`.await`来等待其他实现了`Future`特质的类型完成，例如 另外一个`async fn`的输出。和`block_on`不同，`.await`不会阻塞当前线程，而是异步地等待 future完成，在当前future无法进行下去时，允许其他任务运行。
+在`async fn`函数中， 你可以使用`.await`来等待其他实现了`Future` trait 的类型完成，例如 另外一个`async fn`的输出。和`block_on`不同，`.await`不会阻塞当前线程，而是异步地等待 future完成，在当前future无法进行下去时，允许其他任务运行。
 
 举个例子，想想有以下三个`async fn`: `learn_song`, `sing_song`和`dance`：
 

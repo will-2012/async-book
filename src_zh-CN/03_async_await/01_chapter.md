@@ -4,7 +4,7 @@
 
 `async`/`.await` 是特殊的Rust语法，使得让出当前线程控制权成为可能，而不是阻塞它，也允许其他代码在等待一个操作完成时取得进展。
 
-有两种主要的方法使用 `async`: `async fn` 和 `async` 块。两种方法都返回一个实现了 `Future` 特质的值：
+有两种主要的方法使用 `async`: `async fn` 和 `async` 块。两种方法都返回一个实现了 `Future` trait 的值：
 
 ```rust,edition2018,ignore
 {{#include ../../examples/03_01_async_await/src/lib.rs:async_fn_and_block_examples}}
@@ -42,7 +42,7 @@
 
 提醒一下，在使用多线程的 `Future` 执行器时，一个 `Future` 可能在线程间移动，所以任何在 `async` 体中使用的变量必须能够穿过线程，因为任何 `.await` 都有可能导致线程切换。
 
-这意味着使用 `Rc`，`&RefCell` 或者其他没有实现 `Send` 特质的类型是不安全的，包括那些指向 没有 `Sync` 特质类型的引用。
+这意味着使用 `Rc`，`&RefCell` 或者其他没有实现 `Send` trait 的类型是不安全的，包括那些指向 没有 `Sync` trait 类型的引用。
 
 (注意：使用这些类型是允许的，只要他们不是在调用 `.await` 的作用域内。)
 

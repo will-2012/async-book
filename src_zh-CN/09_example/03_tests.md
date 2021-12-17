@@ -15,13 +15,13 @@ use async_std::io::{Read, Write};
 async fn handle_connection(mut stream: impl Read + Write + Unpin) {
 ```
 
-接下来，我们需要将建一个实现了这些特质的 mock `TcpStream`。首先，我们先实现 `Read` 特质，只需要一个方法 `poll_read`。我们的 mock `TcpStream` 会包含一些需要拷贝到读取缓存的数据，然后我们返回 `Poll::Ready` 来表示读取已经完成。
+接下来，我们需要将建一个实现了这些 trait 的 mock `TcpStream`。首先，我们先实现 `Read` trait，只需要一个方法 `poll_read`。我们的 mock `TcpStream` 会包含一些需要拷贝到读取缓存的数据，然后我们返回 `Poll::Ready` 来表示读取已经完成。
 
 ```rust,ignore
 {{#include ../../examples/09_05_final_tcp_server/src/main.rs:mock_read}}
 ```
 
-我们 `Write` 特质的实现非常简单，尽管我们需要写三个方法: `poll_write`, `poll_flush`, 和 `poll_close`。 `poll_write` 会拷贝任何输入数据到 mock `TcpStream`，然后回在完成时返回 `Poll::Ready`。没有工作需要 flush 或者 close 这个 mock `TcpStream`, 所以 `poll_flush` 和 `poll_close` 可以直接返回 `Poll::Ready`。
+我们 `Write` trait 的实现非常简单，尽管我们需要写三个方法: `poll_write`, `poll_flush`, 和 `poll_close`。 `poll_write` 会拷贝任何输入数据到 mock `TcpStream`，然后回在完成时返回 `Poll::Ready`。没有工作需要 flush 或者 close 这个 mock `TcpStream`, 所以 `poll_flush` 和 `poll_close` 可以直接返回 `Poll::Ready`。
 
 ```rust,ignore
 {{#include ../../examples/09_05_final_tcp_server/src/main.rs:mock_write}}

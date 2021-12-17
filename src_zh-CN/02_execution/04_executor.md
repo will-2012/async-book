@@ -6,7 +6,7 @@ Rust 的 `Future` 是惰性的：它们不会干任何事，除非它们被驱�
 
 在这一小节，我们要写一个我们的简单执行器，能够并发地运行大量的顶层 future 实例。
 
-这个例子中，我们依赖 `futures` 库的 `ArcWake` 特质, 它提供了简便的构造 `Waker` 的方法。编辑 `Cargo.toml` 来引入新依赖：
+这个例子中，我们依赖 `futures` 库的 `ArcWake` trait, 它提供了简便的构造 `Waker` 的方法。编辑 `Cargo.toml` 来引入新依赖：
 
 ```toml
 [package]
@@ -39,7 +39,7 @@ futures = "0.3"
 {{#include ../../examples/02_04_executor/src/lib.rs:spawn_fn}}
 ```
 
-为了轮询 future，我们需要创建 `Waker`。正如在[任务唤醒小节]中讨论到，`Waker` 负责调度任务在 `wake` 函数调用时再次轮询。记住，`Waker` 告诉执行器具体哪个任务已经准备好了，这使得它们 可以只轮询已经准备好的 future。创建 `Waker` 的最简单方法是实现 `ArcWake` 特质，然后使用  `waker_ref` 或者 `.into_waker()` 函数来把 `Arc<impl ArcWake>` 转变成 `Waker`。我们来给我们的任务实现 `ArcWake`，以便它们可以变成 `Waker` 并且被唤醒：
+为了轮询 future，我们需要创建 `Waker`。正如在[任务唤醒小节]中讨论到，`Waker` 负责调度任务在 `wake` 函数调用时再次轮询。记住，`Waker` 告诉执行器具体哪个任务已经准备好了，这使得它们 可以只轮询已经准备好的 future。创建 `Waker` 的最简单方法是实现 `ArcWake` trait，然后使用  `waker_ref` 或者 `.into_waker()` 函数来把 `Arc<impl ArcWake>` 转变成 `Waker`。我们来给我们的任务实现 `ArcWake`，以便它们可以变成 `Waker` 并且被唤醒：
 
 ```rust,ignore
 {{#include ../../examples/02_04_executor/src/lib.rs:arcwake_for_task}}

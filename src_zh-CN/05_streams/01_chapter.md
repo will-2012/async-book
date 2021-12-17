@@ -1,6 +1,6 @@
-# `Steam` 特质
+# `Steam` trait
 
-`Stream` 特质与 `Future` 类似，但能在完成前返还（yield）多个值，与标准库中的 `Iterator` 类似：
+`Stream` trait 与 `Future` 类似，但能在完成前返还（yield）多个值，与标准库中的 `Iterator` 类似：
 
 ```rust,no_run
 {{#include ../../examples_zh-CN/05_01_streams/src/lib.rs:stream_trait}}
