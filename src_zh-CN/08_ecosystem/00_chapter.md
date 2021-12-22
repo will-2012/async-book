@@ -1,15 +1,15 @@
 # 异步生态系统
-Rust目前仅提供编写异步代码最基础的能力。重要的是，标准库尚未提供执行器，任务，反应器，组合器以及底层I/O futures和特质。同时，社区提供的异步生态系统填补了这些空白。
+Rust目前仅提供编写异步代码最基础的能力。重要的是，标准库尚未提供执行器，任务，反应器，组合器以及底层I/O futures和 trait。同时，社区提供的异步生态系统填补了这些空白。
 
 异步基础团队正在扩展书中的示例，来涵盖多个运行时。如果你对这个项目做出贡献有兴趣，请在 [Zulip](https://rust-lang.zulipchat.com/#narrow/stream/201246-wg-async-foundations.2Fbook) 上联系我们。
 
 ## 异步运行时
-异步运行时是用于执行异步应用程序的库。运行时通常将一个反应器与一个或多个执行器捆绑在一起。反应器为外部事件提供订阅机制，例如异步I/O，进程间通信以及计时器。在异步运行时中，订阅用户通常是代表底层I/O操作的futures。执行器负责任务的计划和执行。它们跟踪正在运行和挂起的任务，轮询futures以完成任务，并在有进展时唤醒任务。 “执行器”一词经常与“运行时”互换使用。在这里，我们使用“生态系统”一词来描述一个绑定了兼容特质和功能的运行时。
+异步运行时是用于执行异步应用程序的库。运行时通常将一个反应器与一个或多个执行器捆绑在一起。反应器为外部事件提供订阅机制，例如异步I/O，进程间通信以及计时器。在异步运行时中，订阅用户通常是代表底层I/O操作的futures。执行器负责任务的计划和执行。它们跟踪正在运行和挂起的任务，轮询futures以完成任务，并在有进展时唤醒任务。 “执行器”一词经常与“运行时”互换使用。在这里，我们使用“生态系统”一词来描述一个绑定了兼容 trait 和功能的运行时。
 
 ## 社区提供的异步库
 
 ### Futures库
-[`futures` 库](https://docs.rs/futures/)包含可用于编写异步代码的特质和功能。这包括 `Stream`，`Sink`，`AsyncRead` 和 `AsyncWrite` 特质，以及诸如组合器的实用工具。这些实用工具和特质最终可能成为标准库的一部分。
+[`futures` 库](https://docs.rs/futures/)包含可用于编写异步代码的 trait 和功能。这包括 `Stream`，`Sink`，`AsyncRead` 和 `AsyncWrite` trait，以及诸如组合器的实用工具。这些实用工具和 trait 最终可能成为标准库的一部分。
 
 `futures` 有它自己的执行器，但没有自己的反应器，所以它不支持异步I/O或计时器 `futures` 的执行。因为这个原因，它不被视为一个完整的运行时。一个常见的选择是将`futures` 中的实用工具与另一个库中的执行器一起使用。
 
@@ -18,16 +18,16 @@ Rust目前仅提供编写异步代码最基础的能力。重要的是，标准�
 
 - [Tokio](https://docs.rs/tokio/)：一个具有HTTP，gRPC和跟踪框架的主流异步生态系统。
 - [async-std](https://docs.rs/async-std/)：一个提供标准库组件级别的库。
-- [smol](https://docs.rs/smol/)：一个小且简单的异步运行时。提供可用于包装 `UnixStream` 或 `TcpListener` 此类的结构的 `Async` 特质。
+- [smol](https://docs.rs/smol/)：一个小且简单的异步运行时。提供可用于包装 `UnixStream` 或 `TcpListener` 此类的结构的 `Async` trait。
 - [fuchsia-async](https://fuchsia.googlesource.com/fuchsia/+/master/src/lib/fuchsia-async/)：在Fuchsia操作系统中使用的执行器。
 
 
 ## 确定生态系统兼容性
-并非所有异步应用程序，框架和库都彼此兼容，也不是和每个操作系统或平台都兼容。大多数异步代码可以在任一生态系统中使用，但是某些框架和库会要求使用特定的生态系统。生态系统限制并不总是记录在案的，但是有一些经验法则可以确定一个库，特质或功能是否取依赖特定的生态系统。
+并非所有异步应用程序，框架和库都彼此兼容，也不是和每个操作系统或平台都兼容。大多数异步代码可以在任一生态系统中使用，但是某些框架和库会要求使用特定的生态系统。生态系统限制并不总是记录在案的，但是有一些经验法则可以确定一个库，trait 或功能是否取依赖特定的生态系统。
 
 与异步I/O，计时器，进程间通信或任务交互的异步代码通常都取依赖特定的异步执行器或反应器。除此以外的异步代码，例如异步表达式，组合器，同步类型和流，通常都与生态系统无关，所有嵌套的futures也与生态系统无关。在开始项目之前，建议先调研相关的异步框架和库，以确定与您选择的运行时以及彼此之间的兼容性。
 
-值得注意的是，`Tokio` 使用 `mio` 反应器并定义了自己的异步I/O特质的版本，包括 `AsyncRead` 和 `AsyncWrite`。 它本身与 `async-std` 和 `smol` 不兼容，它们依赖于[`async-executor` 库](https://docs.rs/async-executor)以及在 `futures` 中定义的 `AsyncRead` 和 `AsyncWrite` 特质。
+值得注意的是，`Tokio` 使用 `mio` 反应器并定义了自己的异步I/O trait 的版本，包括 `AsyncRead` 和 `AsyncWrite`。 它本身与 `async-std` 和 `smol` 不兼容，它们依赖于[`async-executor` 库](https://docs.rs/async-executor)以及在 `futures` 中定义的 `AsyncRead` 和 `AsyncWrite` trait。
 
 有时可以通过兼容性层解决运行时冲突需求，它允许您在另一个运行时调用为当前运行时编写的代码。 例如，[`async_compat` 库](https://docs.rs/async_compat)提供了 `Tokio` 和其他运行时。
 

@@ -10,9 +10,9 @@
 {{#include ../../examples/09_04_concurrent_tcp_server/src/main.rs:handle_connection}}
 ```
 
-这异步版本的 `TcpListener` 为了能使用 `listener.incoming`，实现了`Stream` 特质，这个改动有两个好处：首先，`listener.incoming()` 不再阻塞执行器了，执行器能够在没有其他接入的 TCP 连接需要处理时，让给其他还在等在的 future 对象继续执行。
+这异步版本的 `TcpListener` 为了能使用 `listener.incoming`，实现了`Stream` trait，这个改动有两个好处：首先，`listener.incoming()` 不再阻塞执行器了，执行器能够在没有其他接入的 TCP 连接需要处理时，让给其他还在等在的 future 对象继续执行。
 
-第二个好处是，来自的流的元素能可选地被并发处理，通过流的 `for_each_concurrent` 方法。这里，我们会重复利用这个方法来并发处理每一个接入的请求。我们需要引入 `futures` 库的 `Stream` 特质，所以我们的 Cargo.toml 现在看起来像这样：
+第二个好处是，来自的流的元素能可选地被并发处理，通过流的 `for_each_concurrent` 方法。这里，我们会重复利用这个方法来并发处理每一个接入的请求。我们需要引入 `futures` 库的 `Stream` trait，所以我们的 Cargo.toml 现在看起来像这样：
 
 ```diff
 +[dependencies]

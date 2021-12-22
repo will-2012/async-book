@@ -29,7 +29,7 @@
 
 类似的，需要 `FusedFuture` 是因为 `select` 一定不能轮询已完成的 future。`FusedFuture` 用来追踪（track）future是否已完成。这种使得在循环中使用 `select` 成为可能，只轮询尚未完成的 future。这可以从上面的例子中看出，`a_fut` 或 `b_fut` 可能会在第二次循环的时候已经完成了。因为 `future::ready` 返回的 future 实现了 `FusedFuture`，所以 `select` 可以知道不必再次轮询它了。
 
-注意，stream 也有对应的 `FusedStream` 特质。实现了这个特质或者被 `.fuse()` 包装的 Stream 会从它们的 `.next`/`try_next()` 组合子中返还 `FusedFutre`。
+注意，stream 也有对应的 `FusedStream` trait。实现了这个 trait 或者被 `.fuse()` 包装的 Stream 会从它们的 `.next`/`try_next()` 组合子中返还 `FusedFutre`。
 
 ```rust,no_run
 {{#include ../../examples_zh-CN/06_03_select/src/lib.rs:fused_stream}}
