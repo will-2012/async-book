@@ -4,7 +4,7 @@
 
 ## 为什么需要固定
 
-`Pin` 和 `Unpin` 标记 trait 搭配使用。固定保证了实现了 `Unpin` trait 的对象不会被移动。为了理解这为什么必须，我们回忆一下 `async`/`.await` 怎么工作吧。考虑以下代码：
+`Pin` 和 `Unpin` 标记 trait 搭配使用。固定保证了实现了 `!Unpin` trait 的对象不会被移动。为了理解这为什么必须，我们回忆一下 `async`/`.await` 怎么工作吧。考虑以下代码：
 
 ```rust,edition2018,ignore
 let fut_one = ...;
