@@ -313,8 +313,9 @@ It's easy to get this to show undefined behavior and fail in other spectacular w
 Let's see how pinning and the `Pin` type can help us solve this problem.
 
 The `Pin` type wraps pointer types, guaranteeing that the values behind the
-pointer won't be moved. For example, `Pin<&mut T>`, `Pin<&T>`,
-`Pin<Box<T>>` all guarantee that `T` won't be moved even if `T: !Unpin`.
+pointer won't be moved if it is not implementing `Unpin`. For example, `Pin<&mut
+T>`, `Pin<&T>`, `Pin<Box<T>>` all guarantee that `T` won't be moved if `T:
+!Unpin`.
 
 Most types don't have a problem being moved. These types implement a trait
 called `Unpin`. Pointers to `Unpin` types can be freely placed into or taken
@@ -568,17 +569,17 @@ impl Test {
             _marker: PhantomPinned,
         };
         let mut boxed = Box::pin(t);
-        let self_ptr: *const String = &boxed.as_ref().a;
+        let self_ptr: *const String = &boxed.a;
         unsafe { boxed.as_mut().get_unchecked_mut().b = self_ptr };
 
         boxed
     }
 
-    fn a<'a>(self: Pin<&'a Self>) -> &'a str {
+    fn a(self: Pin<&Self>) -> &str {
         &self.get_ref().a
     }
 
-    fn b<'a>(self: Pin<&'a Self>) -> &'a String {
+    fn b(self: Pin<&Self>) -> &String {
         unsafe { &*(self.b) }
     }
 }
