@@ -286,7 +286,7 @@ fn main() {
 
 我们来看看固定和 `Pin` 类型如何帮助我们解决这个问题。
 
-`Pin` 类型包装了指针类型, 保证指针指向的值不会被移动。例如, `Pin<&mut T>`, `Pin<&T>`, `Pin<Box<T>>` 都保证了 `T` 不会被移动，即使 `T: !Unpin`.
+`Pin` 类型包装了指针类型, 保证没有实现 `Unpin` 指针指向的值不会被移动。例如, `Pin<&mut T>`, `Pin<&T>`, `Pin<Box<T>>` 都保证了 `T` 不会被移动，即使 `T: !Unpin`.
 
 多数类型被移走也不会有问题。这些类型实现了 `Unpin` trait。指向 `Unpin` 类型的指针能够自由地放进 `Pin`，或取走。例如，`u8` 是 `Unpin` 的，所以 `Pin<&mut T>` 的行为就像普通的 `&mut T`，就像普通的 `&mut u8`。
 
@@ -525,17 +525,17 @@ impl Test {
             _marker: PhantomPinned,
         };
         let mut boxed = Box::pin(t);
-        let self_ptr: *const String = &boxed.as_ref().a;
+        let self_ptr: *const String = &boxed.a;
         unsafe { boxed.as_mut().get_unchecked_mut().b = self_ptr };
 
         boxed
     }
 
-    fn a<'a>(self: Pin<&'a Self>) -> &'a str {
+    fn a(self: Pin<&Self>) -> &str {
         &self.get_ref().a
     }
 
-    fn b<'a>(self: Pin<&'a Self>) -> &'a String {
+    fn b(self: Pin<&Self>) -> &String {
         unsafe { &*(self.b) }
     }
 }

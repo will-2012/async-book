@@ -8,7 +8,7 @@
 
 Future 能通过调用 `poll` 的方式推进，这会尽可能地推进 future 到完成状态。如果 future 完成了， 那就会返回 `poll::Ready(result)`。如果 future 尚未完成，则返回 `poll::Pending`，并且安排 `wake()` 函数在 `Future` 准备好进一步执行时调用（译者注：注册回调函数）。当 `wake()` 调用 时，驱动 `Future` 的执行器会再次 `poll` 使得 `Future` 有所进展。
 
-没有 `wake()` 函数的话，执行器将无从获知一个future 是否能有所进展，并且会持续轮询（polling） 所有 future。但有了 `wake()` 函数，执行器就能知道哪些 future 已经准备好轮询了。
+没有 `wake()` 函数的话，执行器将无从获知一个 future 是否能有所进展，只能持续轮询（polling） 所有 future。但有了 `wake()` 函数，执行器就能知道哪些 future 已经准备好轮询了。
 
 例如，考虑一下场景：我们准备读取一个套接字（socket），它可能还没有可以返回的数据。如果它有 数据了，我们可以读取数据并返回 `poll::Ready(data)`，但如果数据没有准备好，我们这个future 就会阻塞并且不能继续执行。当没有数据可用时，我们需要注册 `wake` 函数，以在有数据可用时告诉执行 器我们的 future 准备好进一步操作。一个简单的 `SocketRead`future 可能像这样:
 
@@ -39,5 +39,3 @@ Futures的这种模型允许组合多个异步操作而无需立刻分配资源�
 然后 `wake: fn()` 变成了 `&mut Context<'_>`。在 `SimpleFuture` 里，我们调用函数指针（`fn()`） 来告诉执行器有future需要轮询。然而，因为 `fn()` 是仅仅是个函数指针，它不能储存任何信息说明哪个 `Future` 调用了 `wake`。
 
 在现实场景中，像Web服务器这样复杂的应用可能有上千不同的连接，带有应该相互隔离来管理的 唤醒器（wakeups）。`Context` 类型通过提供对 `waker` 类型的访问来解决这个问题，这些 `waker` 会唤起持定任务。
-
-
