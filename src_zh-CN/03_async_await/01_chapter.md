@@ -28,7 +28,7 @@
 {{#include ../../examples/03_01_async_await/src/lib.rs:static_future_with_borrow}}
 ```
 
-通过移动参数到 `async` 块中，我们把它的生命周期扩展到了匹配调用 `foo` 函数返回的 `Future` 的生命周期。
+通过移动参数到 `async` 块中，我们把它的生命周期扩展到了匹配调用 `good` 函数返回的 `Future` 的生命周期。
 
 ## `async move`
 
