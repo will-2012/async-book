@@ -4,3 +4,4 @@
 
 - [俄语](https://doc.rust-lang.ru/async-book/)
 - [法语](https://jimskapt.github.io/async-book-fr/)
+- [فارسی](https://rouzbehsbz.github.io/rust-async-book/)
