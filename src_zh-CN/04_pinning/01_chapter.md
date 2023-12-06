@@ -288,7 +288,7 @@ fn main() {
 
 我们来看看固定和 `Pin` 类型如何帮助我们解决这个问题。
 
-`Pin` 类型包装了指针类型, 保证没有实现 `Unpin` 指针指向的值不会被移动。例如, `Pin&lt;&amp;mut T&gt;`, `Pin&lt;&amp;T&gt;`, `Pin&lt;Box&lt;T&gt;&gt;` 都保证了 `T` 不会被移动，即使 `T: !Unpin`.
+`Pin` 类型包装了指针类型, 保证没有实现 `Unpin` 指针指向的值不会被移动。例如, `Pin<&mut T>`, `Pin<&T>`, `Pin<Box<T>>` 都保证了 `T` 不会被移动，即使 `T: !Unpin`.
 
 多数类型被移走也不会有问题。这些类型实现了 `Unpin` trait。指向 `Unpin` 类型的指针能够自由地放进 `Pin`，或取走。例如，`u8` 是 `Unpin` 的，所以 `Pin<&mut T>` 的行为就像普通的 `&mut T`，就像普通的 `&mut u8`。
 
@@ -597,7 +597,7 @@ execute_unpin_future(fut); // OK
 
 ## 总结
 
-1. 如果 `T: Unpin`（默认会实现），那么 `Pin&lt;'a, T&gt;` 完全等价于 `&amp;'a mut T`。换言之： `Unpin` 意味着这个类型被移走也没关系，就算已经被固定了，所以 `Pin` 对这样的类型毫无影响。
+1. 如果 `T: Unpin`（默认会实现），那么 `Pin<'a, T>` 完全等价于 `&'a mut T`。换言之： `Unpin` 意味着这个类型被移走也没关系，就算已经被固定了，所以 `Pin` 对这样的类型毫无影响。
 
 2. 如果 `T: !Unpin`， 获取已经被固定的 T 类型示例的 `&mut T`需要 unsafe。
 
