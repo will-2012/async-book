@@ -1,21 +1,19 @@
 #![cfg(test)]
 
 // ANCHOR: imports
-use {
-    futures::{
-        future::{BoxFuture, FutureExt},
-        task::{waker_ref, ArcWake},
-    },
-    std::{
-        future::Future,
-        sync::mpsc::{sync_channel, Receiver, SyncSender},
-        sync::{Arc, Mutex},
-        task::Context,
-        time::Duration,
-    },
-    // The timer we wrote in the previous section:
-    timer_future::TimerFuture,
+use futures::{
+    future::{BoxFuture, FutureExt},
+    task::{waker_ref, ArcWake},
 };
+use std::{
+    future::Future,
+    sync::mpsc::{sync_channel, Receiver, SyncSender},
+    sync::{Arc, Mutex},
+    task::Context,
+    time::Duration,
+};
+// The timer we wrote in the previous section:
+use timer_future::TimerFuture;
 // ANCHOR_END: imports
 
 // ANCHOR: executor_decl
@@ -92,7 +90,7 @@ impl Executor {
             if let Some(mut future) = future_slot.take() {
                 // Create a `LocalWaker` from the task itself
                 let waker = waker_ref(&task);
-                let context = &mut Context::from_waker(&*waker);
+                let context = &mut Context::from_waker(&waker);
                 // `BoxFuture<T>` is a type alias for
                 // `Pin<Box<dyn Future<Output = T> + Send + 'static>>`.
                 // We can get a `Pin<&mut dyn Future + Send + 'static>`
