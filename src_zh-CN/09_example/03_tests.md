@@ -9,7 +9,6 @@
 首先，我们要更改 `handle_connection` 的签名，来使得它更容易测试。`handle_connection` 其实并不需要 `async_std::net::TcpStream`，它需要的是任意已经实现了 `async_std::io::Read`, `async_std::io::Write` 和 `marker::Unpin`。这样修改类型签名允许我们传递一个 mock 来测试。
 
 ```rust,ignore
-use std::marker::Unpin;
 use async_std::io::{Read, Write};
 
 async fn handle_connection(mut stream: impl Read + Write + Unpin) {

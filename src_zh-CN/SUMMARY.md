@@ -16,7 +16,7 @@
 - [同时执行多个 Future](06_multiple_futures/01_chapter.md)
     - [`join!`](06_multiple_futures/02_join.md)
     - [`select!`](06_multiple_futures/03_select.md)
-    - [TODO: Spawning]()
+    - [分派（任务）](06_multiple_futures/04_spawning.md)
     - [TODO: Cancellation and Timeouts]()
     - [TODO: `FuturesUnordered`]()
 - [需要知道并热爱的规避方法](07_workarounds/01_chapter.md)
@@ -34,3 +34,4 @@
 - [TODO: Asynchronous Design Patterns: Solutions and Suggestions]()
     - [TODO: Modeling Servers and the Request/Response Pattern]()
     - [TODO: Managing Shared State]()
+- [附录: 本书翻译](12_appendix/01_translations.md)

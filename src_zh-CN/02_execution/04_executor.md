@@ -13,7 +13,7 @@ Rust 的 `Future` 是惰性的：它们不会干任何事，除非它们被驱�
 name = "timer_future"
 version = "0.1.0"
 authors = ["XYZ Author"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 futures = "0.3"

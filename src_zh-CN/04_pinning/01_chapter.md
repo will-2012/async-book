@@ -33,7 +33,9 @@ enum State {
 }
 
 impl Future for AsyncFuture {
-    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<()> {
+    type Output = ();
+
+    fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<()> {
         loop {
             match self.state {
                 State::AwaitingFutOne => match self.fut_one.poll(..) {
@@ -444,7 +446,27 @@ pub fn main() {
 # }
 ```
 
-类型系统会阻止我们移动这些数据。
+类型系统会阻止我们移动这些数据，像下面这样：
+
+```
+error[E0277]: `PhantomPinned` cannot be unpinned
+   --> src\test.rs:56:30
+    |
+56  |         std::mem::swap(test1.get_mut(), test2.get_mut());
+    |                              ^^^^^^^ within `test1::Test`, the trait `Unpin` is not implemented for `PhantomPinned`
+    |
+    = note: consider using `Box::pin`
+note: required because it appears within the type `test1::Test`
+   --> src\test.rs:7:8
+    |
+7   | struct Test {
+    |        ^^^^
+note: required by a bound in `std::pin::Pin::<&'a mut T>::get_mut`
+   --> <...>rustlib/src/rust\library\core\src\pin.rs:748:12
+    |
+748 |         T: Unpin,
+    |            ^^^^^ required by this bound in `std::pin::Pin::<&'a mut T>::get_mut`
+```
 
 > 重点记住，固定到栈总是依赖你在写 `unsafe` 代码时提供的保证。例如，我们知道了 `&'a mut T` 的 *被指向对象（pointee）* 在生命周期 `'a` 期间固定，我们不知道被 `&'a mut T` 指向数据是否在 `'a` 结束后仍然不被移动。如果移动了，将会违反固定的协约。
 >

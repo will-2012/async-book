@@ -34,8 +34,10 @@ Futures的这种模型允许组合多个异步操作而无需立刻分配资源�
 {{#include ../../examples/02_02_future_trait/src/lib.rs:real_future}}
 ```
 
-我们首先注意到 `self` 参数类型不再是 `mut self` 而是 `Pin<&mut Self>,`。我们会在后面章节 更多地讨论固定（pinning）的问题，但现在我们只需要知道它能让我们创建不可移动的future类型。 不可移动对象能够储存指向另一字段（field）的指针，例如：`struct MyFut { a: i32, ptr_to_a: *const i32 }`。固定对于启动 async/await 是必需的。
+我们首先注意到 `self` 参数类型不再是 `&mut self` 而是 `Pin<&mut Self>,`。我们会在后面章节 更多地讨论固定（pinning）的问题，但现在我们只需要知道它能让我们创建不可移动的future类型。 不可移动对象能够储存指向另一字段（field）的指针，例如：`struct MyFut { a: i32, ptr_to_a: *const i32 }`。固定对于启动 async/await 是必需的。
 
 然后 `wake: fn()` 变成了 `&mut Context<'_>`。在 `SimpleFuture` 里，我们调用函数指针（`fn()`） 来告诉执行器有future需要轮询。然而，因为 `fn()` 是仅仅是个函数指针，它不能储存任何信息说明哪个 `Future` 调用了 `wake`。
 
 在现实场景中，像Web服务器这样复杂的应用可能有上千不同的连接，带有应该相互隔离来管理的 唤醒器（wakeups）。`Context` 类型通过提供对 `waker` 类型的访问来解决这个问题，这些 `waker` 会唤起持定任务。
+
+
