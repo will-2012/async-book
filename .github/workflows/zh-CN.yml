@@ -33,7 +33,7 @@ jobs:
     - name: Build mdbook
       run: mdbook build && pwd
     - name: Cache artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-pages-artifact@v3
       with:
         name: book
         path: ./book
@@ -41,19 +41,12 @@ jobs:
   deploy:
     if: github.event_name == 'push'
     needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     runs-on: ubuntu-latest
     steps:
-    - name: Get artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: book
-    - name: Deploy
-      uses: peaceiris/actions-gh-pages@v4
-      with:
-        deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-        publish_dir: ./book/html
-        publish_branch: gh-pages
-        allow_empty_commit: true
-        user_name: "huangjj27"
-        user_email: "huangjj.27@qq.com"
-        force_orphan: true
+      - name: Deploy
+        id: deployment
+        uses: peaceiris/actions-gh-pages@v4
