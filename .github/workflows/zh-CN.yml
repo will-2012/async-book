@@ -2,9 +2,11 @@ name: zh-CN Translation
 
 on:
   push:
-    branches: zh-CN
+    branches: 
+      - zh-CN
   pull_request:
-    branches: zh-CN
+    branches: 
+      - zh-CN
 
 env:
   CARGO_TERM_COLOR: always
